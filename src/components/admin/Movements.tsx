@@ -577,7 +577,7 @@ const byFund = useMemo(() => {
 }, [filtered, fundById]);
 
 
-  const comunesEgAbs = byFund.get(fundIdComunes)?.egSumAbs ?? 0;
+  const comunesNetAbs = Math.abs(byFund.get(fundIdComunes)?.total ?? 0);
 
   const cardRioja = {
     title: 'La Rioja',
@@ -586,7 +586,9 @@ const byFund = useMemo(() => {
     egSumAbs: byFund.get(fundIdRioja)?.egSumAbs ?? 0,
     egCount: byFund.get(fundIdRioja)?.egCount ?? 0,
     total: byFund.get(fundIdRioja)?.total ?? 0,
-    netWithComunes: (byFund.get(fundIdRioja)?.ingSum ?? 0) - (byFund.get(fundIdRioja)?.egSumAbs ?? 0) - (comunesEgAbs/2),
+    netWithComunes: (byFund.get(fundIdRioja)?.ingSum ?? 0)
+  - (byFund.get(fundIdRioja)?.egSumAbs ?? 0)
+  - (comunesNetAbs/2),
   };
   const cardPipinos = {
     title: 'Los Pipinos',
@@ -595,7 +597,7 @@ const byFund = useMemo(() => {
     egSumAbs: byFund.get(fundIdPipinos)?.egSumAbs ?? 0,
     egCount: byFund.get(fundIdPipinos)?.egCount ?? 0,
     total: byFund.get(fundIdPipinos)?.total ?? 0,
-    netWithComunes: (byFund.get(fundIdPipinos)?.ingSum ?? 0) - (byFund.get(fundIdPipinos)?.egSumAbs ?? 0) - (comunesEgAbs/2),
+    netWithComunes: (byFund.get(fundIdPipinos)?.ingSum ?? 0) - (byFund.get(fundIdPipinos)?.egSumAbs ?? 0) - (comunesNetAbs/2),
   };
   const cardComunes = {
     title: 'Comunes',

@@ -60,6 +60,8 @@ function toYYYYMMDD(d: Date) {
 export default function Home() {
   const { user } = useAuth();
   const isAdmin = useIsAdmin();
+  const roles = user?.roles ?? [];
+  const isAdministerView = isAdmin || roles.includes('owner') || roles.includes('contador');
 
   const [funds, setFunds] = useState<Fund[]>([]);
   const [txs, setTxs] = useState<Tx[]>([]);
@@ -185,9 +187,23 @@ export default function Home() {
     }
     return Array.from(agg.entries()).map(([fund_id, v]) => ({ fund_id, ...v }));
   }, [filtered, funds]);
-
+  
   // Helpers para stats por fondo
   const statsFor = (fundId?: string) => byFund.find(x => x.fund_id === fundId);
+  const comunesNetAbs = Math.abs(statsFor(sharedFund?.id ?? '')?.net ?? 0);
+  const comunesNetEn2 = comunesNetAbs/2;
+  const shouldHalfForTotals = !isAdministerView && fundFilter === 'all';
+  const netToShow = shouldHalfForTotals ? (totals.net + comunesNetEn2) : totals.net;
+  const netNote = shouldHalfForTotals
+    ? `Ajustado por Comunes (1/2): ${fmtARS.format(comunesNetEn2)}`
+    : 'Consolidado (incluye Comunes completos)';
+
+  const adjustedNet = (fundId: string, baseNet: number) => {
+    const n = (fundById.get(fundId)?.name ?? '').trim().toLowerCase();
+    return (n === 'la rioja' || n === 'los pipinos')
+      ? baseNet - (comunesNetAbs / 2)   // usar neto de comunes / 2
+      : baseNet;
+  };
 
   return (
     <div className="home-dash-page">
@@ -224,29 +240,27 @@ export default function Home() {
               <div className="home-dash-grid home-dash-grid--funds">
                 {mainFunds.map(f => {
                   const stat = statsFor(f.id);
+                  const net  = adjustedNet(f.id, stat?.net ?? 0);   // 👈 acá
+
                   return (
                     <article key={f.id} className="home-dash-fund-card">
                       <header className="home-dash-fund-card__header">
                         <h3 className="home-dash-fund-card__name">{f.name}</h3>
-                        {/* <span className={`home-dash-status-badge ${f.is_active ? 'home-dash-status-badge--ok' : 'home-dash-status-badge--off'}`}>
-                          {f.is_active ? 'Activo' : 'Inactivo'}
-                        </span> */}
                       </header>
                       <div className="home-dash-fund-card__body">
-                        {/* <div className="home-dash-fund-card__stat">
-                          <span className="home-dash-fund-card__label">Movimientos</span>
-                          <strong className="home-dash-fund-card__value">{stat?.count ?? 0}</strong>
-                        </div> */}
                         <div className="home-dash-fund-card__stat">
-                          <span className="home-dash-fund-card__label">Neto</span>
-                          <strong className={`home-dash-fund-card__value ${ (stat?.net ?? 0) >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                            {fmtARS.format(stat?.net ?? 0)}
+                          <span className="home-dash-fund-card__label">
+                            Neto
+                          </span>
+                          <strong className={`home-dash-fund-card__value ${net >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
+                            {fmtARS.format(net)}
                           </strong>
                         </div>
                       </div>
                     </article>
                   );
                 })}
+
               </div>
             )}
 
@@ -268,7 +282,10 @@ export default function Home() {
                     <div className="home-dash-fund-card__stat">
                       <span className="home-dash-fund-card__label">Neto</span>
                       <strong className={`home-dash-fund-card__value ${ (statsFor(sharedFund.id)?.net ?? 0) >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                        {fmtARS.format(statsFor(sharedFund.id)?.net ?? 0)}
+                        
+                          {fmtARS.format(Number(comunesNetEn2 ?? 0))}
+                        
+
                       </strong>
                     </div>
                   </div>
@@ -282,10 +299,16 @@ export default function Home() {
             <h2 className="home-dash-section-title">Totalizadores</h2>
             <div className="home-dash-grid home-dash-grid--metrics">
               <div className="home-dash-metric-card">
-                <span className="home-dash-metric-card__label">Saldo (Neto)</span>
-                <strong className={`home-dash-metric-card__value ${totals.net >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                  {fmtARS.format(totals.net)}
+                <span className="home-dash-metric-card__label">
+                  SALDO (NETO){' '}
+                  <small style={{opacity:.7}}> {netNote}</small>
+                </span>
+                <strong className={`home-dash-metric-card__value ${netToShow >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
+                  {fmtARS.format(
+                    netToShow
+                  )}
                 </strong>
+
               </div>
               <div className="home-dash-metric-card">
                 <span className="home-dash-metric-card__label">Ingresos (Créditos)</span>
