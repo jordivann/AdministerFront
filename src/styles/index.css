@@ -1,0 +1,12 @@
+:root {
+  --bg: #0b0e13;
+  --text: #e6eaf2;
+  --muted: #9aa3b2;
+  --card: #151a22;
+  --accent: #45d483;
+  --border: #212734;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }

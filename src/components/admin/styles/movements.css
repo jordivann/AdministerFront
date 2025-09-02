@@ -1,0 +1,109 @@
+/* ===== Base ===== */
+.mov-root { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif; color:#0f172a; }
+.mov-title { display:flex; gap:12px; align-items:center; font-weight:700; font-size:22px; margin:0 0 12px; }
+.mov-count { opacity:.6; font-size:13px; font-weight:500; }
+
+/* ===== Quickbar ===== */
+.mov-quickbar { display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 18px; }
+
+/* ===== Botones ===== */
+.mov-btn { background:linear-gradient(180deg,#0a84ff,#007aff); color:#fff; border:0; border-radius:12px; padding:10px 14px; font-weight:600; box-shadow:0 2px 6px rgba(0,122,255,.25); transition:transform .02s ease, box-shadow .15s ease, filter .15s ease; }
+.mov-btn:hover { filter:brightness(1.04); box-shadow:0 4px 10px rgba(0,122,255,.28); }
+.mov-btn:active { transform:translateY(1px); }
+.mov-btn:disabled { opacity:.6; cursor:not-allowed; box-shadow:none; }
+.mov-btn--ghost { background:#ffffff; color:#0f172a; border:1px solid #d0d5dd; box-shadow:none; }
+.mov-btn--sm { padding:6px 10px; font-size:12px; }
+
+/* ===== Filtros (no sticky, compactos) ===== */
+.mov-filters { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:14px; margin-bottom:16px; box-shadow:0 6px 16px rgba(15,23,42,.06); }
+.mov-filters--nosticky { position: static; }
+
+.mov-filters-grid {
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0,1fr)); /* 5 columnas en desktop */
+  gap:12px;
+  margin-bottom:12px;
+}
+
+/* cada celda */
+/* .mov-col {} */
+/* búsqueda ocupa todo el ancho debajo */
+.mov-col--search { grid-column: 1 / -1; }
+
+@media (max-width: 1200px) {
+  .mov-filters-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  .mov-filters-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .mov-filters-actions { flex-direction: column; align-items: flex-start; gap:10px; }
+}
+
+.mov-lbl { display:block; font-size:12px; color:#475569; margin:0 0 6px; }
+.mov-inp, .mov-sel {
+  width:100%; height:40px; background:#f8fafc; color:#0f172a; border:1px solid #d0d5dd; border-radius:10px; padding:0 10px;
+  outline:none; transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+.mov-inp:focus, .mov-sel:focus { border-color:#0a84ff; box-shadow:0 0 0 3px rgba(10,132,255,.18); background:#ffffff; }
+
+.mov-filters-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.mov-filters-shortcuts { display:flex; gap:8px; flex-wrap:wrap; }
+.mov-filters-cta { display:flex; gap:10px; flex-wrap:wrap; }
+
+/* ===== Cards por fondo ===== */
+.mov-fundcards { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:14px; margin: 14px 0 18px; }
+@media (max-width: 1200px){ .mov-fundcards { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 640px){ .mov-fundcards { grid-template-columns: 1fr; } }
+
+.mov-fundcard {
+  background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:14px 16px;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.mov-fundcard-title { font-size:12px; color:#64748b; letter-spacing:.02em; text-transform:uppercase; margin-bottom:4px; }
+.mov-fundcard-value { font-weight:800; font-size:20px; margin-bottom:4px; color:#0f172a; }
+.mov-fundcard-value.pos { color:#0e9f6e; }
+.mov-fundcard-value.neg { color:#e11d48; }
+.mov-fundcard-sub { font-size:12px; color:#64748b; margin-bottom:6px; }
+.mov-fundcard-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:12px; color:#334155; }
+
+/* ===== Mensajes / Raw ===== */
+.mov-error-msg { color:#b91c1c; border:1px solid #fecaca; background:#fff1f2; padding:12px 14px; border-radius:12px; margin-bottom:12px; }
+.mov-raw-block { max-height: 280px; overflow:auto; margin-bottom: 12px; background:#0b1220; color:#e5e7eb; border-radius:12px; border:1px solid #0f1a33; padding:12px; }
+
+/* ===== Tabla ===== */
+.mov-tablewrap { border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; background:#ffffff; box-shadow: 0 14px 36px rgba(15,23,42,.06); }
+.mov-table { width:100%; border-collapse: separate; border-spacing:0; }
+.mov-th, .mov-td { padding: 12px 14px; border-bottom:1px solid #eef2f7; }
+.mov-th { font-size:12px; color:#64748b; text-transform: uppercase; letter-spacing:.02em; user-select:none; cursor:pointer; background:#ffffff; }
+.mov-td--right { text-align:right; }
+.mov-td--mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+.mov-table tbody tr:hover .mov-td { background:#f8fafc; }
+
+.mov-amt-pos { color:#047857; }
+.mov-amt-neg { color:#b91c1c; }
+
+.mov-tag { padding:2px 8px; border-radius:999px; font-size:12px; border:1px solid transparent; }
+.mov-tag--debit  { background:#fff1f2; color:#b91c1c; border-color:#fecaca; }
+.mov-tag--credit { background:#ecfdf5; color:#047857; border-color:#a7f3d0; }
+
+/* ===== Paginación ===== */
+.mov-pager { display:flex; align-items:center; justify-content:space-between; margin:16px 0 10px; }
+.mov-pager-info { opacity:.8; font-size:13px; }
+.mov-pager-controls { display:flex; gap:10px; align-items:center; }
+.mov-pager-num { min-width:40px; text-align:center; }
+.mov-pager-size { width: 100px; }
+
+/* ===== Modal ===== */
+.mov-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); display:grid; place-items:center; z-index: 9990; }
+.mov-modal { width:min(780px, 96vw); background:#ffffff; border:1px solid #e5e7eb; border-radius:18px; padding:20px; box-shadow: 0 30px 80px rgba(0,0,0,.20); z-index: 10000; }
+.mov-modal-title { margin: 0 0 12px; font-size:18px; font-weight:700; }
+.mov-modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+.mov-space-between { justify-content:space-between; }
+.mov-actions-right { display:flex; gap:10px; }
+.mov-modal-grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+.mov-col-12 { grid-column: span 12; }
+.mov-col-6  { grid-column: span 6; }
+
+
+/* movements.css */
+.row-error { background: #ffeaea; }
+.mov-chip--err { padding: 0 6px; border-radius: 10px; background:#ff8b8b; color:#111; font-weight:600; }

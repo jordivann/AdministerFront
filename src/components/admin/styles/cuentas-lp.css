@@ -1,0 +1,158 @@
+/* iOS Light look & feel para Admin Cuentas Los Pipinos */
+
+:root {
+  --alp-text: #1c1c1e;
+  --alp-text-muted: #8e8e93;
+  --alp-border: rgba(60,60,67,0.12);
+  --alp-border-strong: rgba(60,60,67,0.18);
+  --alp-bg: #f5f5f7;
+  --alp-card: rgba(255,255,255,0.9);
+  --alp-accent: #007aff;
+  --alp-positive: #34c759;
+  --alp-negative: #ff3b30;
+  --alp-shadow: 0 12px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  --alp-radius: 14px;
+  --alp-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+}
+
+.alp-root {
+  font-family: var(--alp-font);
+  color: var(--alp-text);
+}
+
+.alp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.alp-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.alp-subtitle {
+  font-size: 13px;
+  color: var(--alp-text-muted);
+}
+
+.alp-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.alp-searchwrap {
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+
+.alp-input {
+  height: 38px;
+  min-width: 220px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--alp-border-strong);
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  outline: none;
+}
+.alp-input--right { text-align: right; }
+
+.alp-btn {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--alp-border-strong);
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.alp-btn:hover { transform: translateY(-1px); }
+.alp-btn:active { transform: translateY(0); }
+
+.alp-btn--primary {
+  background: linear-gradient(135deg, #0a84ff, #5ac8fa);
+  color: #fff;
+  border: 1px solid rgba(0,122,255,0.3);
+}
+.alp-btn--ghost {
+  background: rgba(255,255,255,0.85);
+}
+
+.alp-clear {
+  height: 38px;
+}
+
+.alp-card {
+  border: 1px solid var(--alp-border);
+  background: var(--alp-card);
+  border-radius: var(--alp-radius);
+  box-shadow: var(--alp-shadow);
+}
+
+.alp-create {
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.alp-create-row { display: grid; gap: 6px; }
+.alp-create-row label { font-size: 12px; color: var(--alp-text-muted); }
+
+.alp-error {
+  margin: 12px 0;
+  border: 1px solid rgba(255,59,48,0.25);
+  color: var(--alp-negative);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255,59,48,0.06);
+}
+
+.alp-list {
+  display: grid;
+  gap: 10px;
+}
+
+.alp-item {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--alp-border);
+  border-radius: var(--alp-radius);
+  background: var(--alp-card);
+  box-shadow: var(--alp-shadow);
+}
+
+.alp-col-name { display: flex; flex-direction: column; gap: 6px; }
+.alp-name { font-weight: 700; letter-spacing: -0.01em; }
+.alp-updated { font-size: 12px; color: var(--alp-text-muted); }
+
+.alp-col-monto { text-align: right; }
+.alp-money { font-weight: 700; }
+.alp-money.pos { color: var(--alp-positive); }
+.alp-money.neg { color: var(--alp-negative); }
+
+.alp-col-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+.alp-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--alp-text-muted);
+}
+.alp-empty-title { font-weight: 700; margin-bottom: 6px; }
+
+/* Responsive */
+@media (max-width: 860px) {
+  .alp-create { grid-template-columns: 1fr; }
+  .alp-item { grid-template-columns: 1fr; }
+  .alp-col-actions { justify-content: flex-start; }
+  .alp-input { min-width: 0; width: 100%; }
+}
