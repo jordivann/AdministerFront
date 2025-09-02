@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
+import Loader from '../components/ui/Loader';
 // opcional: si querés reutilizar estilos base
 // import './styles/Liquidaciones.css';
 
@@ -320,7 +321,7 @@ export default function FacturasPage() {
       </div>
 
       {err && <div className="liq-error">Error: {err}</div>}
-      {loading && <div className="liq-empty">Cargando…</div>}
+      {loading && <Loader/>}
 
       {!loading && !err && (
         <div className="liq-tableWrap">

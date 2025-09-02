@@ -16,6 +16,7 @@ import Cuentas from './pages/Cuentas';
 import FacturasPage from './pages/Facturas';
 import PaymentsPage from './pages/Payments';
 import PaymentsAdmin from './components/admin/PaymentsAdmin';
+import Loader from './components/ui/Loader';
 
 function Protected({ children }: { children: JSX.Element }) {
   const { user, meLoading, meLoaded, fetchMe } = useAuth();
@@ -27,7 +28,7 @@ function Protected({ children }: { children: JSX.Element }) {
     fetchMe().finally(() => setReady(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  if (!ready || meLoading) return <div style={{ padding: 24 }}>Cargando…</div>;
+  if (!ready || meLoading) return <Loader/>;
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/login" replace />;
   return children;
