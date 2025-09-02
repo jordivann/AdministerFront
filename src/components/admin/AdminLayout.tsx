@@ -134,7 +134,7 @@ export default function AdminLayout() {
           <p className="admin-sidebar__subtitle">
             Herramientas de gestión avanzada
           </p>
-          <a href="./home" className="admin-sidebar__back-link">
+          <a href="/" className="admin-sidebar__back-link">
             Volver al inicio
           </a>
         </div>
