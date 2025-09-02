@@ -1,0 +1,149 @@
+/* Variables base: usa tus tokens si ya tenés --color-primary definido */
+:root {
+  --fe-primary: var(--color-primary, #2563eb);
+  --fe-bg: var(--color-surface, #ffffff);
+  --fe-text: var(--color-text, #0b1220);
+  --fe-muted: color-mix(in oklab, var(--fe-text) 25%, transparent);
+}
+.loaderContainer{
+    width:100%;
+    height: 100%;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+
+/* Contenedor */
+.fe-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-width: var(--loader-size, 40px);
+  min-height: var(--loader-size, 40px);
+  color: var(--fe-text);
+}
+
+/* ---------- VARIANTE RING (pro, brillante) ---------- */
+.fe-ring {
+  width: var(--loader-size, 40px);
+  height: var(--loader-size, 40px);
+  position: relative;
+  border-radius: 50%;
+  /* Círculo con barrido */
+  background:
+    conic-gradient(from 0deg, color-mix(in oklab, var(--fe-primary) 80%, #fff) 0 25%,
+                            color-mix(in oklab, var(--fe-primary) 60%, #fff) 25% 50%,
+                            color-mix(in oklab, var(--fe-primary) 40%, #000) 50% 75%,
+                            color-mix(in oklab, var(--fe-primary) 20%, #000) 75% 100%);
+  /* Hacemos ring: recortamos el centro */
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 58%, #000 59%);
+          mask: radial-gradient(circle at 50% 50%, transparent 58%, #000 59%);
+  animation: fe-spin 1s linear infinite;
+  filter: drop-shadow(0 2px 10px color-mix(in oklab, var(--fe-primary) 40%, transparent));
+}
+.fe-ring::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background: radial-gradient(60% 60% at 30% 30%, #fff6 0, #0000 60%);
+  pointer-events: none;
+}
+
+/* ---------- VARIANTE DOTS (micro-loader elegante) ---------- */
+.fe-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--loader-size, 40px) * 0.18);
+}
+.fe-dots > span {
+  width: calc(var(--loader-size, 40px) * 0.18);
+  height: calc(var(--loader-size, 40px) * 0.18);
+  border-radius: 50%;
+  background: var(--fe-primary);
+  opacity: 0.6;
+  animation: fe-bounce 1s infinite ease-in-out;
+}
+.fe-dots > span:nth-child(2) { animation-delay: 0.12s; }
+.fe-dots > span:nth-child(3) { animation-delay: 0.24s; }
+
+/* ---------- VARIANTE BAR (con soporte de progreso) ---------- */
+.fe-bar {
+  position: relative;
+  width: min(420px, 56vw);
+  height: 10px;
+}
+.fe-bar-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fe-text) 10%, transparent);
+}
+.fe-bar-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--loader-progress, 12%);
+  border-radius: 999px;
+  background: linear-gradient(90deg,
+              color-mix(in oklab, var(--fe-primary) 90%, #fff),
+              var(--fe-primary));
+  overflow: hidden;
+}
+.fe-bar.is-indeterminate .fe-bar-fill {
+  width: 30%;
+  animation: fe-indeterminate 1.4s ease-in-out infinite;
+}
+.fe-bar-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #fff6 0 8px,
+      #0000 8px 16px
+    );
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+}
+
+/* ---------- FULLSCREEN OVERLAY ---------- */
+.fe-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--fe-bg) 94%, transparent), transparent),
+    color-mix(in oklab, var(--fe-bg) 70%, transparent);
+  backdrop-filter: blur(6px) saturate(1.05);
+}
+.fe-fullscreen .fe-label {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* ---------- ANIMACIONES ---------- */
+@keyframes fe-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes fe-bounce {
+  0%, 80%, 100% { transform: scale(0.66); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+@keyframes fe-indeterminate {
+  0%   { transform: translateX(0%); }
+  50%  { transform: translateX(120%); }
+  100% { transform: translateX(240%); }
+}
+
+/* Respeta usuarios con "reducir movimiento" */
+@media (prefers-reduced-motion: reduce) {
+  .fe-ring, .fe-dots > span, .fe-bar.is-indeterminate .fe-bar-fill {
+    animation: none !important;
+  }
+}

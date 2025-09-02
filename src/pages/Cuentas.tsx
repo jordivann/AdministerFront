@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
+import Loader from '../components/ui/Loader';
 
 type Cuenta = {
   id: string;
@@ -294,7 +295,7 @@ export default function CuentasEstado() {
             opacity: loading || !hasMore ? 0.6 : 1,
           }}
         >
-          {loading ? 'Cargando…' : hasMore ? 'Cargar más' : 'No hay más'}
+          {loading ? <Loader/> : hasMore ? 'Cargar más' : 'No hay más'}
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
 import './styles/Liquidaciones.css';
+import Loader from '../components/ui/Loader';
 
 type Fund = { id: string; name: string };
 
@@ -541,7 +542,7 @@ function LiqDetailModal({
         </div>
 
         <div className="liq-modal__body">
-          {loading && <div className="liq-empty">Cargando…</div>}
+          {loading && <Loader/>}
           {!loading && data && (
             <div className="liq-detail">
               {/* Cabecera */}

@@ -4,6 +4,7 @@ import api from '../lib/api';
 import { useAuth, useIsAdmin } from '../store/auth';
 import './styles/Home.css';
 import HelpTips from '../components/ui/HelpTips';
+import Loader from '../components/ui/Loader';
 
 type Fund = { id: string; name: string; is_active: boolean };
 
@@ -209,7 +210,6 @@ export default function Home() {
     <div className="home-dash-page">
       <section className="home-dash-hero">
         <h1 className="home-dash-hero-title">Resumen</h1>
-        {isAdmin && (<p className="home-dash-hero-subtitle">Vistas de solo lectura — fondos habilitados por RLS</p>)}
       </section>
 
       <HelpTips
@@ -217,12 +217,11 @@ export default function Home() {
         autoHideMs={10000}
         tips={[
           'Podés filtrar por tipo y por rango sin recargar.',
-          'Saldo (Neto) = Ingresos (Créditos) – Egresos (Débitos).',
-          'Usá “Incluir Comunes” para sumar el fondo compartido cuando filtrás por un fondo propio.'
+          'Explorá el resto de las páginas para más información'
         ]}
       />
 
-      {loading && <div className="home-dash-skeleton home-dash-skeleton--panel">Cargando datos…</div>}
+      {loading && <Loader/>}
       {err && <div className="home-dash-alert home-dash-alert--error">Error: {err}</div>}
 
       {!loading && !err && (

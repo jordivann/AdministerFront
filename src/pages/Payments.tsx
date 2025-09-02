@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
+import Loader from '../components/ui/Loader';
 
 type Fund = { id: string; name: string };
 type Provider = { id: string; name: string };
@@ -108,7 +109,7 @@ function PaymentDetailModal({
         </div>
 
         <div className="liq-modal__body">
-          {loading && <div className="liq-empty">Cargando…</div>}
+          {loading && <Loader/>}
           {!loading && data && (
             <div className="liq-detail">
               <div className="liq-detail__headerGrid">
@@ -304,7 +305,7 @@ export default function PaymentsPage() {
       </div>
 
       {err && <div className="liq-error">Error: {err}</div>}
-      {loading && <div className="liq-empty">Cargando…</div>}
+      {loading && <Loader/>}
 
       {!loading && !err && (
         <div className="liq-tableWrap">
