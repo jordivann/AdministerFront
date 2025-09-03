@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
+import { fmtDateAR } from '../lib/dates';
 import Loader from '../components/ui/Loader';
 // opcional: si querés reutilizar estilos base
 // import './styles/Liquidaciones.css';
@@ -49,8 +50,7 @@ type FacturaDetail = {
 const fmtMoney = (n: number | undefined) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(Number(n || 0));
 
-const fmtDate = (iso: string) =>
-  new Intl.DateTimeFormat('es-AR', { dateStyle: 'short' }).format(new Date(iso));
+const fmtDate = fmtDateAR;
 
 const isAdminUser = (roles: string[] | undefined) => {
   const list = (roles ?? []).map((r) => String(r).toLowerCase());

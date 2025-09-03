@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../lib/api';
 import { useAuth } from '../store/auth';
 import Loader from '../components/ui/Loader';
+import { fmtDateAR } from '../lib/dates';
 
 type Cuenta = {
   id: string;
@@ -15,8 +16,7 @@ type Cuenta = {
 const fmtMoney = (n: number | undefined) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(Number(n || 0));
 
-const fmtDate = (iso: string) =>
-  new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(iso));
+const fmtDate = fmtDateAR;
 
 const isAdminUser = (roles?: string[]) => {
   const r = (roles ?? []).map((x) => String(x).toLowerCase());
