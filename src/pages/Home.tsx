@@ -5,6 +5,7 @@ import { useAuth, useIsAdmin } from '../store/auth';
 import './styles/Home.css';
 import HelpTips from '../components/ui/HelpTips';
 import Loader from '../components/ui/Loader';
+import { fmtDateAR } from '../lib/dates';
 
 type Fund = { id: string; name: string; is_active: boolean };
 
@@ -25,25 +26,7 @@ type TypeKey = 'all' | 'credit' | 'debit';
 const fmtARS = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 });
 const TZ = 'America/Argentina/Buenos_Aires';
 
-// Devuelve YYYY-MM-DD en zona horaria local (GMT-3)
-const ymdInTZ = (d: Date, tz = TZ) =>
-  new Intl.DateTimeFormat('en-CA', { 
-    timeZone: tz, 
-    year: 'numeric', 
-    month: '2-digit', 
-    day: '2-digit' 
-  }).format(d);
-
-function fmtDate(s: string) {
-  if (!s) return '—';
-  // si ya viene YYYY-MM-DD sin hora, devolver directo
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.split('-').reverse().join('/');
-  const d = new Date(s);
-  if (Number.isNaN(+d)) return String(s).slice(0,10);
-  const ymd = ymdInTZ(d); // ej: 2025-09-03
-  const [y,m,dia] = ymd.split('-');
-  return `${dia}/${m}/${y}`;
-}
+const fmtDate =fmtDateAR;
 
 function signedAmount(tx: Tx): number {
   const base = Math.abs(tx.amount);
