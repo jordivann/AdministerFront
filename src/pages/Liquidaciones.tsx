@@ -748,6 +748,18 @@ export default function LiquidacionesPage() {
     return base;
   }, []);
 
+  const sortedRows = useMemo(() => {
+  return [...rows].sort((a, b) => {
+    // 1. Prioridad: estado
+    if (a.status === 'En curso' && b.status !== 'En curso') return -1;
+    if (b.status === 'En curso' && a.status !== 'En curso') return 1;
+
+    // 2. Dentro de mismo estado, ordenar por nombre (alfabético ascendente)
+    return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+  });
+}, [rows]);
+
+
   return (
     <div className="liq-page">
       <div className="liq-toolbar">
@@ -773,7 +785,7 @@ export default function LiquidacionesPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {sortedRows.map((r) => (
                 <tr key={r.id}>
                   <td>{fmtDate(r.created_at)}</td>
                   <td>{r.name}</td>
