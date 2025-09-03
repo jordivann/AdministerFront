@@ -785,8 +785,8 @@ async function doImport() {
       {/* Filtros */}
       <div className="mov-filters mov-filters--nosticky">
         <div className="mov-filters-grid">
-          <div className="mov-col"><label className="mov-lbl">Desde</label><input className="mov-inp" type="date" value={from} onChange={e=>setFrom(e.target.value)} /></div>
-          <div className="mov-col"><label className="mov-lbl">Hasta</label><input className="mov-inp" type="date" value={to} onChange={e=>setTo(e.target.value)} /></div>
+          <div className="mov-col"><label className="mov-lbl">Desde</label><input className="mov-inp" type="date"   lang="es-AR" value={from} onChange={e=>setFrom(e.target.value)} /></div>
+          <div className="mov-col"><label className="mov-lbl">Hasta</label><input className="mov-inp" type="date"   lang="es-AR" value={to} onChange={e=>setTo(e.target.value)} /></div>
           <div className="mov-col"><label className="mov-lbl">Fondo</label>
             <select className="mov-sel" value={fundId} onChange={e=>setFundId(e.target.value)}>
               <option value="">Todos</option>
@@ -984,7 +984,7 @@ async function doImport() {
 
               <div className="mov-col">
                 <label className="mov-lbl">Fecha</label>
-                <input className="mov-inp" type="date" value={form.tx_date} onChange={(e)=>setForm(f=>({ ...f, tx_date: e.target.value }))} />
+                <input className="mov-inp" type="date"   lang="es-AR"  value={form.tx_date} onChange={(e)=>setForm(f=>({ ...f, tx_date: e.target.value }))} />
               </div>
 
               <div className="mov-col">
@@ -1103,7 +1103,7 @@ async function doImport() {
 
               <div className="mov-col">
                 <label className="mov-lbl">Fecha</label>
-                <input className="mov-inp" type="date" value={editForm.tx_date} onChange={(e)=>setEditForm(f=>f ? ({ ...f, tx_date: e.target.value }) : f)} />
+                <input className="mov-inp" type="date"   lang="es-AR" value={editForm.tx_date} onChange={(e)=>setEditForm(f=>f ? ({ ...f, tx_date: e.target.value }) : f)} />
               </div>
 
               <div className="mov-col">

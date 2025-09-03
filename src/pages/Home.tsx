@@ -23,10 +23,27 @@ type RangeKey = '30d' | 'thisMonth' | '90d' | 'all';
 type TypeKey = 'all' | 'credit' | 'debit';
 
 const fmtARS = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 });
-const fmtDate = (iso: string) => {
-  const [y, m, d] = iso.split('-');  // YYYY-MM-DD -> DD/MM/YYYY
-  return `${d}/${m}/${y}`;
-};
+const TZ = 'America/Argentina/Buenos_Aires';
+
+// Devuelve YYYY-MM-DD en zona horaria local (GMT-3)
+const ymdInTZ = (d: Date, tz = TZ) =>
+  new Intl.DateTimeFormat('en-CA', { 
+    timeZone: tz, 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  }).format(d);
+
+function fmtDate(s: string) {
+  if (!s) return '—';
+  // si ya viene YYYY-MM-DD sin hora, devolver directo
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.split('-').reverse().join('/');
+  const d = new Date(s);
+  if (Number.isNaN(+d)) return String(s).slice(0,10);
+  const ymd = ymdInTZ(d); // ej: 2025-09-03
+  const [y,m,dia] = ymd.split('-');
+  return `${dia}/${m}/${y}`;
+}
 
 function signedAmount(tx: Tx): number {
   const base = Math.abs(tx.amount);
@@ -75,6 +92,10 @@ export default function Home() {
   const [typeFilter, setTypeFilter] = useState<TypeKey>('all');
   const [range, setRange] = useState<RangeKey>('30d');
   const [includeShared, setIncludeShared] = useState<boolean>(true); // incluir "Comunes" cuando se filtra por un fondo
+
+  // Paginación (nuevo)
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10); // por pedido: de a 10 registros
 
   // Carga inicial
   useEffect(() => {
@@ -206,6 +227,17 @@ export default function Home() {
       : baseNet;
   };
 
+  // === Paginación (como en Movements) ===
+  const start = (page - 1) * pageSize;
+  const paged = useMemo(() => filtered.slice(start, start + pageSize), [filtered, start, pageSize]);
+
+  // Resetear a página 1 cuando cambian filtros principales
+  useEffect(() => {
+    setPage(1);
+  }, [q, fundFilter, typeFilter, range, includeShared]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+
   return (
     <div className="home-dash-page">
       <section className="home-dash-hero">
@@ -239,7 +271,7 @@ export default function Home() {
               <div className="home-dash-grid home-dash-grid--funds">
                 {mainFunds.map(f => {
                   const stat = statsFor(f.id);
-                  const net  = adjustedNet(f.id, stat?.net ?? 0);   // 👈 acá
+                  const net  = adjustedNet(f.id, stat?.net ?? 0);
 
                   return (
                     <article key={f.id} className="home-dash-fund-card">
@@ -269,22 +301,12 @@ export default function Home() {
                 <article className="home-dash-fund-card home-dash-fund-card--shared">
                   <header className="home-dash-fund-card__header">
                     <h3 className="home-dash-fund-card__name">{sharedFund.name}</h3>
-                    {/* <span className={`home-dash-status-badge ${sharedFund.is_active ? 'home-dash-status-badge--ok' : 'home-dash-status-badge--off'}`}>
-                      {sharedFund.is_active ? 'Activo' : 'Inactivo'}
-                    </span> */}
                   </header>
                   <div className="home-dash-fund-card__body">
-                    {/* <div className="home-dash-fund-card__stat">
-                      <span className="home-dash-fund-card__label">Movs.</span>
-                      <strong className="home-dash-fund-card__value">{statsFor(sharedFund.id)?.count ?? 0}</strong>
-                    </div> */}
                     <div className="home-dash-fund-card__stat">
                       <span className="home-dash-fund-card__label">Neto</span>
                       <strong className={`home-dash-fund-card__value ${ (statsFor(sharedFund.id)?.net ?? 0) >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                        
-                          {fmtARS.format(Number(comunesNetEn2 ?? 0))}
-                        
-
+                        {fmtARS.format(Number(comunesNetEn2 ?? 0))}
                       </strong>
                     </div>
                   </div>
@@ -303,11 +325,8 @@ export default function Home() {
                   <small style={{opacity:.7}}> {netNote}</small>
                 </span>
                 <strong className={`home-dash-metric-card__value ${netToShow >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                  {fmtARS.format(
-                    netToShow
-                  )}
+                  {fmtARS.format(netToShow)}
                 </strong>
-
               </div>
               <div className="home-dash-metric-card">
                 <span className="home-dash-metric-card__label">Ingresos (Créditos)</span>
@@ -350,7 +369,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Toggle incluir “Comunes” (si hay filtro por fondo y existe Comunes) */}
+              {/* Toggle incluir “Comunes” */}
               {isAdmin && fundFilter !== 'all' && sharedFund && fundFilter !== sharedFund.id && (
                 <div className="home-dash-filter home-dash-include-shared">
                   <label className="home-dash-switch">
@@ -396,48 +415,82 @@ export default function Home() {
             {filtered.length === 0 ? (
               <div className="home-dash-empty">Sin resultados para los filtros aplicados.</div>
             ) : (
-              <div className="home-dash-table-wrap">
-                <table className="home-dash-table">
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      {isAdmin && (<th>Fondo</th>)}
-                      <th>Descripción</th>
-                      <th className="home-dash-amount-col">Monto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map(tx => {
-                      const fund = fundById.get(tx.fund_id);
-                      const isComunes = !isAdmin && fund?.name?.trim().toLowerCase() === 'comunes';
+              <>
+                <div className="home-dash-table-wrap">
+                  <table className="home-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        {isAdmin && (<th>Fondo</th>)}
+                        <th>Descripción</th>
+                        <th className="home-dash-amount-col">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paged.map(tx => {
+                        const fund = fundById.get(tx.fund_id);
+                        const isComunes = !isAdmin && fund?.name?.trim().toLowerCase() === 'comunes';
 
-                      const desc = (tx.description ?? '').trim();
-                      const descLabel = isComunes
-                        ? (desc ? `${desc} - (Comunes)` : '(Comunes)')
-                        : (desc || '—');
+                        const desc = (tx.description ?? '').trim();
+                        const descLabel = isComunes
+                          ? (desc ? `${desc} - (Comunes)` : '(Comunes)')
+                          : (desc || '—');
 
-                      const v = signedAmount(tx);
+                        const v = signedAmount(tx);
 
-                      return (
-                        <tr key={tx.id}>
-                          <td>{fmtDate(tx.tx_date)}</td>
-                          {isAdmin && <td>{fund?.name ?? '—'}</td>}
-                          <td>{descLabel}</td>
-                          <td className={`home-dash-amount-col ${v >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
-                            {fmtARS.format(v)}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                        return (
+                          <tr key={tx.id}>
+                            <td>{fmtDate(tx.tx_date)}</td>
+                            {isAdmin && <td>{fund?.name ?? '—'}</td>}
+                            <td>{descLabel}</td>
+                            <td className={`home-dash-amount-col ${v >= 0 ? 'home-dash-amount--pos' : 'home-dash-amount--neg'}`}>
+                              {fmtARS.format(v)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {filtered.length > pageSize && (
+                    <div className="home-dash-hint">
+                      Mostrando {start + 1}–{Math.min(start + pageSize, filtered.length)} de {filtered.length} filas.
+                    </div>
+                  )}
+                </div>
 
-                  </tbody>
-                </table>
-                {filtered.length > 1000 && (
-                  <div className="home-dash-hint">
-                    Mostrando {filtered.length} filas. Afiná los filtros para una lectura más cómoda.
-                  </div>
-                )}
-              </div>
+                {/* Paginación (nuevo) */}
+                <div className="home-dash-pagination">
+                  <button
+                    className="home-dash-btn home-dash-btn--ghost"
+                    disabled={page <= 1}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    aria-label="Página anterior"
+                  >
+                    ←
+                  </button>
+
+                  <span style={{margin: '0 8px'}}>Página {page} de {totalPages}</span>
+
+                  <button
+                    className="home-dash-btn home-dash-btn--ghost"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    aria-label="Página siguiente"
+                  >
+                    →
+                  </button>
+
+                  <select
+                    className="home-dash-input"
+                    value={pageSize}
+                    onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                    style={{ marginLeft: 12 }}
+                    aria-label="Tamaño de página"
+                  >
+                    {[10, 25, 50, 100].map(n => <option key={n} value={n}>{n} / pág</option>)}
+                  </select>
+                </div>
+              </>
             )}
           </section>
         </>
