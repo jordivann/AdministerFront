@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import api, { prettyFactura } from '../../lib/api';
+import { fmtDateAR } from '../../lib/dates';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import './styles/movements.css';
 
@@ -57,13 +58,7 @@ const ymdInTZ = (d: Date, tz = TZ) =>
 const todayYMD = () => ymdInTZ(new Date());
 const daysAgoYMD = (n: number) => ymdInTZ(new Date(Date.now() - n * 86400000));
 
-function fmtDate(s?: string){
-  if (!s) return '—';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const d = new Date(s);
-  if (Number.isNaN(+d)) return String(s).slice(0,10);
-  return ymdInTZ(d);
-}
+const fmtDate = fmtDateAR;
 
 /** ================= Utils ================= **/
 const toNumber = (x: unknown) => (x==null || x==='') ? undefined : (Number.isFinite(Number(x)) ? Number(x) : undefined);
